@@ -1,0 +1,9 @@
+#include <stdio.h>
+#include <string.h>
+
+signed int main(signed int argc, const char* argv[])
+{
+	printf ("Hello World!");
+	
+	return 0;
+}
