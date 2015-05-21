@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Threading;
 using System.Drawing;
 using System.Text.RegularExpressions;
 using FastColoredTextBoxNS;
@@ -11,52 +12,42 @@ namespace PSL1GHT_IDE
 {
     public class CSyntaxHighlighter : FastColoredTextBox
     {
-        public enum HighlightTheme
-        {
-            Light,
-            Dark
-        };
-
-        private HighlightTheme _curTheme = HighlightTheme.Light;
-        public HighlightTheme CurrentTheme
+        private ProgramProperties.PSL1DETheme _curTheme = new ProgramProperties.PSL1DETheme();
+        public ProgramProperties.PSL1DETheme CurrentTheme
         {
             get { return _curTheme; }
             set
             {
                 _curTheme = value;
 
-                switch (_curTheme)
-                {
-                    case HighlightTheme.Light:
-                        BlueStyle =         light_BlueStyle;
-                        BoldStyle =         light_BoldStyle;
-                        GrayStyle =         light_GrayStyle;
-                        MagentaStyle =      light_MagentaStyle;
-                        GreenStyle =        light_GreenStyle;
-                        BrownStyle =        light_BrownStyle;
-                        MaroonStyle =       light_MaroonStyle;
-                        SameWordsStyle =    light_SameWordsStyle;
+                this.BackColor = _curTheme.BackColor;
+                this.ForeColor = _curTheme.ForeColor;
 
-                        this.BackColor = Color.FromArgb(235, 235, 235);
-                        this.ForeColor = Color.FromArgb(20, 20, 20);
-                        break;
-                    case HighlightTheme.Dark:
-                        BlueStyle =         dark_BlueStyle;
-                        BoldStyle =         dark_BoldStyle;
-                        GrayStyle =         dark_GrayStyle;
-                        MagentaStyle =      dark_MagentaStyle;
-                        GreenStyle =        dark_GreenStyle;
-                        BrownStyle =        dark_BrownStyle;
-                        MaroonStyle =       dark_MaroonStyle;
-                        SameWordsStyle =    dark_SameWordsStyle;
+                this.LineNumberColor = ForeColor;
+                this.IndentBackColor = BackColor;
+                this.CurrentLineColor = _curTheme.CurrentLineColor;
+                this.ChangedLineColor = _curTheme.ChangedLineColor;
+                this.FoldingIndicatorColor = _curTheme.FoldingIndicatorColor;
 
-                        this.BackColor = Color.FromArgb(20, 20, 20);
-                        this.ForeColor = Color.FromArgb(235, 235, 235);
+                AutoComplete.ShowItemToolTips = true;
+                AutoComplete.ToolTipDuration = 0x7FFFFFFF;
+                AutoComplete.ToolTip.BackColor = this.BackColor;
+                AutoComplete.ToolTip.ForeColor = this.ForeColor;
+                //popupAutoCom.ImageList = descImageList;
+                AutoComplete.BackColor = this.BackColor;
+                AutoComplete.ForeColor = this.ForeColor;
+                AutoComplete.Font = new Font(FontFamily.GenericMonospace, 9.75f);
+                AutoComplete.SelectedColor = Color.Red;
+                AutoComplete.Items.MaximumSize = new System.Drawing.Size(300, 300);
+                AutoComplete.Items.Width = 300;
+                AutoComplete.MinFragmentLength = 0;
+                AutoComplete.AppearInterval = 0x7FFFFFFF;
 
-                        this.LineNumberColor = ForeColor;
-                        this.IndentBackColor = BackColor;
-                        break;
-                }
+
+                this.AddStyle(CurrentTheme.Style_Comments);
+                this.UpdateStyles();
+                this.Update();
+                this.Refresh();
             }
         }
 
@@ -91,41 +82,11 @@ namespace PSL1GHT_IDE
             SetAutoCompleteItems();
         }
 
-        //Generic -- Defaulted to light
-        TextStyle BlueStyle = new TextStyle(Brushes.LightBlue, null, FontStyle.Regular);
-        TextStyle BoldStyle = new TextStyle(null, null, FontStyle.Bold | FontStyle.Underline);
-        TextStyle GrayStyle = new TextStyle(Brushes.LightGray, null, FontStyle.Regular);
-        TextStyle MagentaStyle = new TextStyle(Brushes.Magenta, null, FontStyle.Regular);
-        TextStyle GreenStyle = new TextStyle(Brushes.LimeGreen, null, FontStyle.Italic);
-        TextStyle BrownStyle = new TextStyle(Brushes.BurlyWood, null, FontStyle.Italic);
-        TextStyle MaroonStyle = new TextStyle(Brushes.LightYellow, null, FontStyle.Regular);
-        MarkerStyle SameWordsStyle = new MarkerStyle(new SolidBrush(Color.FromArgb(40, Color.Gray)));
-
-        //Light
-        TextStyle light_BlueStyle = new TextStyle(Brushes.DarkBlue, null, FontStyle.Regular);
-        TextStyle light_BoldStyle = new TextStyle(null, null, FontStyle.Bold | FontStyle.Underline);
-        TextStyle light_GrayStyle = new TextStyle(Brushes.DarkGray, null, FontStyle.Regular);
-        TextStyle light_MagentaStyle = new TextStyle(Brushes.Magenta, null, FontStyle.Regular);
-        TextStyle light_GreenStyle = new TextStyle(Brushes.DarkGreen, null, FontStyle.Italic);
-        TextStyle light_BrownStyle = new TextStyle(Brushes.BurlyWood, null, FontStyle.Italic);
-        TextStyle light_MaroonStyle = new TextStyle(Brushes.Gold, null, FontStyle.Regular);
-        MarkerStyle light_SameWordsStyle = new MarkerStyle(new SolidBrush(Color.FromArgb(40, Color.Gray)));
-
-        //Dark
-        TextStyle dark_BlueStyle = new TextStyle(Brushes.LightBlue, null, FontStyle.Regular);
-        TextStyle dark_BoldStyle = new TextStyle(null, null, FontStyle.Bold | FontStyle.Underline);
-        TextStyle dark_GrayStyle = new TextStyle(Brushes.LightGray, null, FontStyle.Regular);
-        TextStyle dark_MagentaStyle = new TextStyle(Brushes.Magenta, null, FontStyle.Regular);
-        TextStyle dark_GreenStyle = new TextStyle(Brushes.LimeGreen, null, FontStyle.Italic);
-        TextStyle dark_BrownStyle = new TextStyle(Brushes.BurlyWood, null, FontStyle.Italic);
-        TextStyle dark_MaroonStyle = new TextStyle(Brushes.LightYellow, null, FontStyle.Regular);
-        MarkerStyle dark_SameWordsStyle = new MarkerStyle(new SolidBrush(Color.FromArgb(40, Color.Gray)));
-
         private void this_TextChanged(object sender, FastColoredTextBoxNS.TextChangedEventArgs e)
         {
             CSyntaxHighlight(e);
 
-            if (e.ChangedRange.Start.iLine == e.ChangedRange.End.iLine)
+            if (e.ChangedRange.Start.iLine == e.ChangedRange.End.iLine && oldLines != null)
             {
                 string oldText = oldLines[e.ChangedRange.Start.iLine];
                 string lineText = this.GetLine(e.ChangedRange.Start.iLine).Text;
@@ -205,11 +166,15 @@ namespace PSL1GHT_IDE
             oldLines = this.Lines.ToArray();
         }
 
-        void CSyntaxHighlighter_LineInserted(object sender, LineInsertedEventArgs e)
+        static void CSyntaxHighlighter_LineInserted_Threaded(object[] args)
         {
-            if (e.Index > 0)
+            CSyntaxHighlighter Instance = (CSyntaxHighlighter)args[0];
+            List<AutocompleteItem> _AutoCompleteIncludes = Instance.AutoCompleteIncludes.ToArray().ToList();
+            int Index = (int)args[1];
+
+            if (Index > 0)
             {
-                string lineText = this.GetLine(e.Index - 1).Text;
+                string lineText = Instance.GetLine(Index - 1).Text;
 
                 if (lineText.ToLower().StartsWith("#include ")) //process include, might take awhile
                 {
@@ -235,16 +200,17 @@ namespace PSL1GHT_IDE
                                         {
                                             foreach (AutocompleteItem incf in incs)
                                             {
-                                                for (int a = 0; a < AutoCompleteIncludes.Count; a++)
-                                                    if (AutoCompleteIncludes[a].MenuText == incf.MenuText && AutoCompleteIncludes[a].Text == incf.Text)
+                                                for (int a = 0; a < _AutoCompleteIncludes.Count; a++)
+                                                    if (_AutoCompleteIncludes[a].MenuText == incf.MenuText && _AutoCompleteIncludes[a].Text == incf.Text)
                                                         goto skip;
 
-                                                AutoCompleteIncludes.Add(incf);
+                                                _AutoCompleteIncludes.Add(incf);
                                             skip: ;
                                             }
                                         }
 
                                     }
+                                    Thread.Sleep(100);
                                 }
                             }
                         }
@@ -253,11 +219,11 @@ namespace PSL1GHT_IDE
                             filep = filep.Replace("\"", "").Replace("\"", "");
                             List<string> includeFolders = new List<string>();
                             includeFolders.Add("include");
-                            includeFolders.AddRange(ProjectMain.Instance.GetCurrentProject(this).ProjectIncludes.Split(' '));
+                            includeFolders.AddRange(ProjectMain.Instance.GetCurrentProject(Instance).ProjectIncludes.Split(' '));
 
                             for (int i = 0; i < includeFolders.Count; i++)
                             {
-                                string inc = System.IO.Path.Combine(ProjectMain.Instance.GetCurrentProject(this).ProjectPath, includeFolders[i], filep);
+                                string inc = System.IO.Path.Combine(ProjectMain.Instance.GetCurrentProject(Instance).ProjectPath, includeFolders[i], filep);
                                 if (System.IO.File.Exists(inc))
                                 {
                                     string[] lines = System.IO.File.ReadAllLines(inc);
@@ -270,22 +236,42 @@ namespace PSL1GHT_IDE
                                             {
                                                 foreach (AutocompleteItem incf in incs)
                                                 {
-                                                    for (int a = 0; a < AutoCompleteIncludes.Count; a++)
-                                                        if (AutoCompleteIncludes[a].MenuText == incf.MenuText && AutoCompleteIncludes[a].Text == incf.Text)
+                                                    for (int a = 0; a < _AutoCompleteIncludes.Count; a++)
+                                                        if (_AutoCompleteIncludes[a].MenuText == incf.MenuText && _AutoCompleteIncludes[a].Text == incf.Text)
                                                             goto skip;
 
-                                                    AutoCompleteIncludes.Add(incf);
+                                                    _AutoCompleteIncludes.Add(incf);
                                                 skip: ;
                                                 }
                                             }
                                         }
+                                        Thread.Sleep(200);
                                     }
                                 }
                             }
                         }
                     }
 
+                    Instance.AutoCompleteIncludes.Clear();
+                    Instance.AutoCompleteIncludes.AddRange(_AutoCompleteIncludes);
+                    _AutoCompleteIncludes.Clear();
+                    Instance.SetAutoCompleteItems();
                 }
+
+            }
+        }
+
+        void CSyntaxHighlighter_LineInserted(object sender, LineInsertedEventArgs e)
+        {
+            Thread searchThread = new Thread(() => CSyntaxHighlighter_LineInserted_Threaded(new object[] { this, e.Index }));
+            searchThread.IsBackground = true;
+
+            if (e.Index > 0)
+            {
+                string lineText = this.GetLine(e.Index - 1).Text;
+                
+                if (lineText.ToLower().StartsWith("#include ")) //process include, might take awhile so using spearate thread
+                    searchThread.Start();
 
                 if (oldLines != null)
                     return;
@@ -298,7 +284,7 @@ namespace PSL1GHT_IDE
                         foreach (AutocompleteItem item in items)
                         {
                             for (int a = 0; a < AutoCompleteWords.Count; a++)
-                                if (AutoCompleteWords[a].MenuText == item.MenuText && AutoCompleteWords[a].Text == item.Text)
+                                if (AutoCompleteWords[a].Text == item.Text)
                                     goto skip;
 
                             AutoCompleteWords.Add(item);
@@ -345,28 +331,33 @@ namespace PSL1GHT_IDE
 
         private void CSyntaxHighlight(FastColoredTextBoxNS.TextChangedEventArgs e)
         {
+            if (CurrentTheme.Name == null)
+                return;
+
             this.LeftBracket = '(';
             this.RightBracket = ')';
             this.LeftBracket2 = '{';
             this.RightBracket2 = '}';
             //clear style of changed range
-            e.ChangedRange.ClearStyle(BlueStyle, BoldStyle, GrayStyle, MagentaStyle, GreenStyle, BrownStyle);
+            e.ChangedRange.ClearStyle(CurrentTheme.Style_Keywords, CurrentTheme.Style_Bold,
+                                        CurrentTheme.Style_Attributes, CurrentTheme.Style_Numbers,
+                                        CurrentTheme.Style_Comments, CurrentTheme.Style_Strings);
 
 
             //string highlighting
-            e.ChangedRange.SetStyle(BrownStyle, @"""""|@""""|''|@"".*?""|(?<!@)(?<range>"".*?[^\\]"")|'.*?[^\\]'");
+            e.ChangedRange.SetStyle(CurrentTheme.Style_Strings, @"""""|@""""|''|@"".*?""|(?<!@)(?<range>"".*?[^\\]"")|'.*?[^\\]'");
             //comment highlighting
-            e.ChangedRange.SetStyle(GreenStyle, @"//.*$", RegexOptions.Multiline);
-            e.ChangedRange.SetStyle(GreenStyle, @"(/\*.*?\*/)|(/\*.*)", RegexOptions.Singleline);
-            e.ChangedRange.SetStyle(GreenStyle, @"(/\*.*?\*/)|(.*\*/)", RegexOptions.Singleline | RegexOptions.RightToLeft);
+            e.ChangedRange.SetStyle(CurrentTheme.Style_Comments, @"//.*$", RegexOptions.Multiline);
+            e.ChangedRange.SetStyle(CurrentTheme.Style_Comments, @"(/\*.*?\*/)|(/\*.*)", RegexOptions.Singleline);
+            e.ChangedRange.SetStyle(CurrentTheme.Style_Comments, @"(/\*.*?\*/)|(.*\*/)", RegexOptions.Singleline | RegexOptions.RightToLeft);
             //number highlighting
-            e.ChangedRange.SetStyle(MagentaStyle, @"\b\d+[\.]?\d*([eE]\-?\d+)?[lLdDfF]?\b|\b0x[a-fA-F\d]+\b");
+            e.ChangedRange.SetStyle(CurrentTheme.Style_Numbers, @"\b\d+[\.]?\d*([eE]\-?\d+)?[lLdDfF]?\b|\b0x[a-fA-F\d]+\b");
             //attribute highlighting
-            e.ChangedRange.SetStyle(GrayStyle, @"^\s*(?<range>\[.+?\])\s*$", RegexOptions.Multiline);
+            e.ChangedRange.SetStyle(CurrentTheme.Style_Attributes, @"^\s*(?<range>\[.+?\])\s*$", RegexOptions.Multiline);
             //class name highlighting
-            e.ChangedRange.SetStyle(BoldStyle, @"\b(#define|#include)\b");
+            e.ChangedRange.SetStyle(CurrentTheme.Style_Bold, @"\b(#define|#include|#ifdef|#ifndef)\b");
             //keyword highlighting
-            e.ChangedRange.SetStyle(BlueStyle, @"\b(" + Globals.CKeywords + @")\b");
+            e.ChangedRange.SetStyle(CurrentTheme.Style_Keywords, @"\b(" + Globals.CKeywords + @")\b");
 
             //clear folding markers
             e.ChangedRange.ClearFoldingMarkers();
@@ -380,7 +371,7 @@ namespace PSL1GHT_IDE
 
         #region C Syntax Parsing
 
-        Place isLineDeclaration_FindReverseString(string[] lines, int startLine, int startInd, string find)
+        static Place isLineDeclaration_FindReverseString(string[] lines, int startLine, int startInd, string find)
         {
             Place ret = new Place();
 
@@ -410,7 +401,7 @@ namespace PSL1GHT_IDE
             return ret;
         }
 
-        bool isLineDeclaration(string line, string[] lines = null, int ind = -1)
+        static bool isLineDeclaration(string line, string[] lines = null, int ind = -1)
         {
             line = line.Trim();
             Regex trimmer = new Regex(@"\s\s+");
@@ -506,7 +497,7 @@ namespace PSL1GHT_IDE
             return false;
         }
 
-        AutocompleteItem _parseLine(string line, int ln = -1, string file = "")
+        static AutocompleteItem _parseLine(string line, int ln = -1, string file = "")
         {
             AutocompleteItem ret = new AutocompleteItem();
 
@@ -626,7 +617,7 @@ namespace PSL1GHT_IDE
             return null;
         }
 
-        string parseLine_Expand(string line, List<string> strings)
+        static string parseLine_Expand(string line, List<string> strings)
         {
             int q1 = line.IndexOf("$__"), q2 = 0;
 
@@ -645,7 +636,7 @@ namespace PSL1GHT_IDE
             return line;
         }
 
-        List<string> parseLine_Collapse(ref string line, string open, string close, int ind = 0)
+        static List<string> parseLine_Collapse(ref string line, string open, string close, int ind = 0)
         {
             int quote1 = line.IndexOf(open), quote2 = 0;
             int qCnt = 0, qInd = 0;
@@ -685,7 +676,7 @@ namespace PSL1GHT_IDE
             return preStrings;
         }
 
-        List<AutocompleteItem> parseLine(string line, int ln = -1, string file = "")
+        static List<AutocompleteItem> parseLine(string line, int ln = -1, string file = "")
         {
             List<AutocompleteItem> ret = new List<AutocompleteItem>();
 

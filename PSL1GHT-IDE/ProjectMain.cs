@@ -30,13 +30,14 @@ namespace PSL1GHT_IDE
             public List<string> revisions;
         }
 
-        List<Project> CurrentProjects = new List<Project>();
+        public List<Project> CurrentProjects = new List<Project>();
 
         public Project GetCurrentProject(Control selectedControl)
         {
             if (CurrentProjects.Count > 0)
                 return CurrentProjects[0];
 
+            
             return null;
         }
 
@@ -63,7 +64,10 @@ namespace PSL1GHT_IDE
                     Properties.Resources.tree_header
                 });
 
+            tabControl1.TabIndexChanged += tabControl1_SelectedIndexChanged;
+            tabControl1.Visible = false;
             tabControl1.TabPages.Clear();
+            tabControl1.SelectedIndex = -1;
 
             WindowState = FormWindowState.Maximized;
 
@@ -747,6 +751,11 @@ namespace PSL1GHT_IDE
             GetCurrentProject(sender as Control).Clean(buildLogger1);
         }
 
+        private void packageToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            GetCurrentProject(sender as Control).Package(buildLogger1);
+        }
+
         private void runToolStripMenuItem_Click(object sender, EventArgs e)
         {
             GetCurrentProject(sender as Control).Run(buildLogger1);
@@ -903,6 +912,7 @@ namespace PSL1GHT_IDE
 
         private void ProjectMain_Load(object sender, EventArgs e)
         {
+            //Globals.Properties = ProgramProperties.Load(System.IO.Path.Combine(System.Windows.Forms.Application.StartupPath, "Properties.psini"));
             if (Globals.Properties == null)
             {
                 string sdkPath = ProgramProperties.FindSDKPath();
@@ -915,6 +925,12 @@ namespace PSL1GHT_IDE
                 Globals.Properties = new ProgramProperties();
                 Globals.Properties.SDKPath = sdkPath;
                 Globals.Properties.Save(Application.StartupPath);
+            }
+            else
+            {
+                HandlePluginControls(Controls);
+                this.BackColor = ProgramProperties.Themes[Globals.Properties.ThemeSelectedIndex].BackColor;
+                this.ForeColor = ProgramProperties.Themes[Globals.Properties.ThemeSelectedIndex].ForeColor;
             }
         }
 
@@ -952,6 +968,14 @@ namespace PSL1GHT_IDE
                 if (tb.Controls.Count > 0)
                     tb.Controls[0].Size = tb.Size;
             }
+        }
+
+        private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (tabControl1.TabPages.Count == 0)
+                tabControl1.Visible = false;
+            else
+                tabControl1.Visible = true;
         }
 
         private void projectMainView_MouseDoubleClick(object sender, MouseEventArgs e)
@@ -1113,10 +1137,11 @@ namespace PSL1GHT_IDE
 
                     tabControl1.TabPages.Add(new FileInfo(newFH.name).Name);
                     tabControl1.TabPages[tabControl1.TabPages.Count - 1].Name = path;
+                    tabControl1.Visible = true;
 
                     newFH.tb = new CSyntaxHighlighter();
+                    newFH.tb.CurrentTheme = ProgramProperties.Themes[Globals.Properties.ThemeSelectedIndex];
                     newFH.tb.Name = newFH.name;
-                    newFH.tb.CurrentTheme = CSyntaxHighlighter.HighlightTheme.Dark;
                     newFH.tb.Tag = "CEDITOR";
                     newFH.tb.Text = File.ReadAllText(path);
                     newFH.tb.Location = new Point(0, 0);
@@ -1127,6 +1152,7 @@ namespace PSL1GHT_IDE
 
                     tabControl1.TabPages[tabControl1.TabPages.Count - 1].Controls.Add(newFH.tb);
                     p.fileHandles.Add(newFH);
+
 
                     tabControl1.SelectedIndex = tabControl1.TabPages.Count - 1;
                     break;
@@ -1202,6 +1228,64 @@ namespace PSL1GHT_IDE
             }
 
             return ret;
+        }
+
+        void SetTheme(ProgramProperties.PSL1DETheme theme)
+        {
+            
+        }
+
+        //From NetCheatPS3
+        public static void HandlePluginControls(Control.ControlCollection plgCtrl)
+        {
+            if (Globals.Properties == null)
+                return;
+
+            Color bc = ProgramProperties.Themes[Globals.Properties.ThemeSelectedIndex].BackColor;
+            Color fc = ProgramProperties.Themes[Globals.Properties.ThemeSelectedIndex].ForeColor;
+
+            foreach (Control ctrl in plgCtrl)
+            {
+                //if (ctrl is GroupBox || ctrl is Panel || ctrl is TabControl || ctrl is TabPage||
+                //    ctrl is UserControl || ctrl is ListBox || ctrl is ListView)
+                if (ctrl.Controls != null && ctrl.Controls.Count > 0)
+                {
+                    HandlePluginControls(ctrl.Controls);
+                }
+
+                if (ctrl is ListView)
+                {
+                    foreach (ListViewItem ctrlLVI in (ctrl as ListView).Items)
+                    {
+                        ctrlLVI.BackColor = bc;
+                        ctrlLVI.ForeColor = fc;
+                    }
+                }
+                else if (ctrl is SplitContainer)
+                {
+                    (ctrl as SplitContainer).Panel1.BackColor = bc;
+                    (ctrl as SplitContainer).Panel1.ForeColor = fc;
+                    (ctrl as SplitContainer).Panel2.BackColor = bc;
+                    (ctrl as SplitContainer).Panel2.ForeColor = fc;
+                    
+                    if ((ctrl as SplitContainer).Panel1.Controls != null)
+                        HandlePluginControls((ctrl as SplitContainer).Panel1.Controls);
+                    if ((ctrl as SplitContainer).Panel2.Controls != null)
+                        HandlePluginControls((ctrl as SplitContainer).Panel2.Controls);
+                }
+                else if (ctrl is TabControl)
+                {
+                    foreach (TabPage tp in (ctrl as TabControl).TabPages)
+                    {
+                        tp.BackColor = bc;
+                        tp.ForeColor = fc;
+                        HandlePluginControls(tp.Controls);
+                    }
+                }
+
+                ctrl.BackColor = bc;
+                ctrl.ForeColor = fc;
+            }
         }
 
         void UpdateProjectTreeView()
@@ -1324,6 +1408,7 @@ namespace PSL1GHT_IDE
         }
 
         #endregion
+
 
     }
 }

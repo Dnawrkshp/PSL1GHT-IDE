@@ -32,11 +32,13 @@
             this.button2 = new System.Windows.Forms.Button();
             this.button3 = new System.Windows.Forms.Button();
             this.propSDKPath = new System.Windows.Forms.TextBox();
+            this.propTheme = new System.Windows.Forms.ComboBox();
+            this.label1 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(325, 39);
+            this.button1.Location = new System.Drawing.Point(325, 80);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 23);
             this.button1.TabIndex = 0;
@@ -46,7 +48,7 @@
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(244, 39);
+            this.button2.Location = new System.Drawing.Point(244, 80);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(75, 23);
             this.button2.TabIndex = 1;
@@ -72,11 +74,31 @@
             this.propSDKPath.TabIndex = 6;
             this.propSDKPath.TextChanged += new System.EventHandler(this.propSDKPath_TextChanged);
             // 
+            // propTheme
+            // 
+            this.propTheme.FormattingEnabled = true;
+            this.propTheme.Location = new System.Drawing.Point(61, 41);
+            this.propTheme.Name = "propTheme";
+            this.propTheme.Size = new System.Drawing.Size(182, 21);
+            this.propTheme.TabIndex = 8;
+            this.propTheme.SelectedIndexChanged += new System.EventHandler(this.propTheme_SelectedIndexChanged);
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(12, 44);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(43, 13);
+            this.label1.TabIndex = 9;
+            this.label1.Text = "Theme:";
+            // 
             // PropertiesEditDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(412, 68);
+            this.ClientSize = new System.Drawing.Size(412, 115);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.propTheme);
             this.Controls.Add(this.button3);
             this.Controls.Add(this.propSDKPath);
             this.Controls.Add(this.button2);
@@ -95,5 +117,7 @@
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.TextBox propSDKPath;
+        private System.Windows.Forms.ComboBox propTheme;
+        private System.Windows.Forms.Label label1;
     }
 }

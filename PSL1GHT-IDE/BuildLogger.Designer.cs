@@ -45,6 +45,7 @@
             this.filterBuild.Appearance = System.Windows.Forms.Appearance.Button;
             this.filterBuild.Checked = true;
             this.filterBuild.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.filterBuild.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.filterBuild.Location = new System.Drawing.Point(3, 3);
             this.filterBuild.Name = "filterBuild";
             this.filterBuild.Size = new System.Drawing.Size(64, 24);
@@ -58,6 +59,7 @@
             this.filterError.Appearance = System.Windows.Forms.Appearance.Button;
             this.filterError.Checked = true;
             this.filterError.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.filterError.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.filterError.Location = new System.Drawing.Point(73, 3);
             this.filterError.Name = "filterError";
             this.filterError.Size = new System.Drawing.Size(64, 24);
@@ -71,6 +73,7 @@
             this.filterWarni.Appearance = System.Windows.Forms.Appearance.Button;
             this.filterWarni.Checked = true;
             this.filterWarni.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.filterWarni.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.filterWarni.Location = new System.Drawing.Point(143, 3);
             this.filterWarni.Name = "filterWarni";
             this.filterWarni.Size = new System.Drawing.Size(64, 24);

@@ -19,3 +19,9 @@
 - Fixed double clicking build "B" output crashing PSL1DE
 
 ###
+5 ::
+- Added Project->Package (runs make pkg)
+- Added Dark and Light themes in Preferences menu
+- Added separate thread to parse includes
+
+###

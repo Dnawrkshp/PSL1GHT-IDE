@@ -197,6 +197,14 @@ namespace PSL1GHT_IDE
             Build(bl, "make exec");
         }
 
+        public void Package(BuildLogger bl)
+        {
+            string pkg = Path.Combine(ProjectPath, ProjectName.Replace(" ", "_") + ".pkg");
+            if (File.Exists(pkg))
+                File.Delete(pkg);
+            Build(bl, "make pkg");
+        }
+
         public bool Close()
         {
             DialogResult dr = DialogResult.Yes;
@@ -269,6 +277,7 @@ namespace PSL1GHT_IDE
             {
                 Image icon0 = Image.FromFile(ProjectIcon0);
                 icon0.Save(Path.Combine(ProjectPath, "ICON0.PNG"), System.Drawing.Imaging.ImageFormat.Png);
+                icon0.Save(Path.Combine(ProjectPath, "pkgfiles", "ICON0.PNG"), System.Drawing.Imaging.ImageFormat.Png);
             }
             else if (!File.Exists(ProjectIcon0)) //use default ICON0.png
                 PSL1GHT_IDE.Properties.Resources.ICON0.Save(Path.Combine(ProjectPath, "ICON0.PNG"), System.Drawing.Imaging.ImageFormat.Png);
@@ -301,6 +310,29 @@ namespace PSL1GHT_IDE
             sfo = sfo.Replace("%APPID%", ProjectAppID);
 
             File.WriteAllText(Path.Combine(ProjectPath, "sfo.xml"), sfo);
+        }
+
+        public void SetTheme(ProgramProperties.PSL1DETheme theme)
+        {
+            foreach (FileHandler fh in fileHandles)
+            {
+                string oldT = fh.tb.Text;
+                int len = fh.tb.SelectionLength;
+                int start = fh.tb.SelectionStart;
+
+                fh.tb.BeginUpdate();
+
+                fh.tb.CurrentTheme = theme;
+                fh.tb.Text = "";
+                fh.tb.Text = oldT;
+                fh.tb.SelectionStart = start;
+                fh.tb.SelectionLength = len;
+                fh.tb.Refresh();
+
+                fh.tb.EndUpdate();
+            }
+
+            SaveAll();
         }
 
         #endregion

@@ -37,6 +37,7 @@ namespace PSL1GHT_IDE
                 return;
             }
 
+            ret.Save(Application.StartupPath);
             Close();
         }
 
@@ -46,6 +47,11 @@ namespace PSL1GHT_IDE
                 Close();
 
             propSDKPath.Text = ret.SDKPath;
+            foreach (ProgramProperties.PSL1DETheme theme in ProgramProperties.Themes)
+            {
+                propTheme.Items.Add(theme.Name);
+            }
+            propTheme.SelectedIndex = Globals.Properties.ThemeSelectedIndex;
         }
 
         private void button3_Click(object sender, EventArgs e)
@@ -61,6 +67,14 @@ namespace PSL1GHT_IDE
         private void propSDKPath_TextChanged(object sender, EventArgs e)
         {
             
+        }
+
+        private void propTheme_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (propTheme.SelectedIndex < 0)
+                return;
+
+            Globals.Properties.ThemeSelectedIndex = propTheme.SelectedIndex;
         }
     }
 }
