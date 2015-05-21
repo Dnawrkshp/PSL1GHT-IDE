@@ -255,6 +255,9 @@ namespace PSL1GHT_IDE
             if (logView.SelectedItems.Count <= 0)
                 return;
 
+            if ((logView.SelectedItems[0].Tag as string) == "null")
+                return;
+
             string strType = logView.SelectedItems[0].SubItems[0].Text;
             string desc = logView.SelectedItems[0].SubItems[1].Text;
             string file = logView.SelectedItems[0].Tag as string;

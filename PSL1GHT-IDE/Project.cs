@@ -11,6 +11,7 @@ using System.IO;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
+using System.Windows.Forms;
 
 namespace PSL1GHT_IDE
 {
@@ -194,6 +195,46 @@ namespace PSL1GHT_IDE
         public void Run(BuildLogger bl)
         {
             Build(bl, "make exec");
+        }
+
+        public bool Close()
+        {
+            DialogResult dr = DialogResult.Yes;
+
+            if (this.isChanged())
+                dr = MessageBox.Show(Globals.WARNING_PROJECT_NOT_SAVED, "Warning - " + this.ProjectName, MessageBoxButtons.YesNoCancel);
+
+            if (dr == DialogResult.Yes)
+                this.SaveAll();
+            else if (dr == DialogResult.Cancel)
+                return false;
+            
+            //Close all file handles (and pages)
+            for (int z = 0; z < fileHandles.Count; z++)
+            {
+                if (fileHandles[z].tb != null && fileHandles[z].tb.Parent != null && fileHandles[z].tb.Parent.Parent != null)
+                {
+                    (fileHandles[z].tb.Parent.Parent as TabControl).TabPages.Remove(fileHandles[z].tb.Parent as TabPage);
+                    fileHandles[z].tb.CloseBindingFile();
+                }
+            }
+
+
+
+            return true;
+        }
+
+        public bool isChanged()
+        {
+            for (int x = 0; x < fileHandles.Count; x++)
+            {
+                if (fileHandles[x].tb.IsChanged)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         public void SaveAll()

@@ -46,14 +46,14 @@
             this.textBox1.Location = new System.Drawing.Point(138, 12);
             this.textBox1.Multiline = true;
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(369, 225);
+            this.textBox1.Size = new System.Drawing.Size(507, 225);
             this.textBox1.TabIndex = 1;
             // 
             // ProgramRevisions
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(519, 261);
+            this.ClientSize = new System.Drawing.Size(657, 261);
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.listBox1);
             this.Name = "ProgramRevisions";

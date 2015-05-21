@@ -10,19 +10,21 @@ namespace PSL1GHT_IDE
 {
     public static class Globals
     {
-        public const int REVISION = 3;
+        public const int REVISION = 4;
         public static string ABOUT_STRING =  "-----  PSL1DE REVISION " + REVISION.ToString() + " -----\n" +
                                             "---- Built " + new FileInfo(System.Reflection.Assembly.GetExecutingAssembly().Location).LastWriteTime.ToShortDateString() + " at " + new FileInfo(System.Reflection.Assembly.GetExecutingAssembly().Location).LastWriteTime.ToShortTimeString() + " ----\n" +
                                             "\n--- Authors ---\n" + 
                                             "--- Dnawrkshp :: Core Developer ---\n" +
                                             "" + //Anyone else
-                                            "\n\nPSL1DE was started as a fun side project by Dnawrkshp. The intention was to create a practical, though not preferable, tool to write homebrew for the PSL1GHT SDK."
+                                            "\n\nPSL1DE is a lite IDE for the PSL1GHT SDK started by Dnawrkshp. It's purpose is to create a practical, though not necessarily preferable, tool to write homebrew for the PSL1GHT SDK."
                                             ;
 
         public const string CKeywords = "auto|break|case|char|const|continue|default|do|double|else|enum|extern|float|for|goto|if|int|long|register|return|short|signed|sizeof|static|struct|switch|typedef|union|unsigned|void|volatile|while";
         public const string CTypes = "char|const|double|enum|extern|float|int|long|short|signed|static|struct|typedef|union|unsigned|void|volatile";
 
         public static string WorkingDirectory = "";
+
+        public const int Max_Projects_Open = 1;
 
         public const string ERROR_PROJECT_NO_CURRENT = "No project open or unable to determine current project.";
         public const string ERROR_INCOMPATIBLE_FILE = "PSL1DE is unable to open this kind of file.\nWould you like Windows to try?";
@@ -32,6 +34,7 @@ namespace PSL1GHT_IDE
         public const string ERROR_PROJECT_PROPERTY_VERSION_INVALID = "Invalid Version! It must be 5 characters (numbers only) in the format XX.XX!";
 
         public const string WARNING_FILE_EXISTS_YESNOCANCEL = "File already exists!\nWould you like to replace it?";
+        public const string WARNING_PROJECT_NOT_SAVED = "The project has not been saved! Would you like to save it?";
 
         public static string[] HIDDEN_FILES = { "thumbs.db" };
 

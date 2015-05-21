@@ -50,6 +50,8 @@ namespace PSL1GHT_IDE
             buildLogger1.blErrorCallback = callback_buildlog_item_doubleclick;
             buildLogger1.blHideStatusCallback = callback_buildlog_hide_status;
 
+            this.FormClosing += ProjectMain_Closing;
+
             //Little hack that lets you right click select
             projectMainView.NodeMouseClick += (sender, args) => projectMainView.SelectedNode = args.Node;
             projectMainView.ImageList = new ImageList();
@@ -71,6 +73,33 @@ namespace PSL1GHT_IDE
         }
 
         #region Project Main TreeView CMenu Strip Events
+
+        private void closeToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            if (projectMainView.SelectedNode == null)
+                return;
+
+            TreeNode SelectedNode = projectMainView.SelectedNode;
+            int x = 0;
+
+            if (SelectedNode.Name.StartsWith("ROOT"))
+            {
+                //Close project
+                for (x = 0; x < CurrentProjects.Count; x++)
+                {
+                    if (CurrentProjects[x].ProjectName == SelectedNode.Text)
+                    {
+                        if (CurrentProjects[x].Close())
+                        {
+                            CurrentProjects.RemoveAt(x);
+                            x--;
+                        }
+                    }
+                }
+
+                UpdateProjectTreeView();
+            }
+        }
 
         private void openToolStripMenuItem1_Click(object sender, EventArgs e)
         {
@@ -607,11 +636,25 @@ namespace PSL1GHT_IDE
             tb.ShowReplaceDialog();
         }
 
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Close();
+        }
+
         private void newProjectToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Project newP = Project.CreateProjectDialog();
             if (newP != null)
             {
+                if ((CurrentProjects.Count + 1) > Globals.Max_Projects_Open)
+                {
+                    CurrentProjects[CurrentProjects.Count - 1].Close();
+                    CurrentProjects.RemoveAt(CurrentProjects.Count - 1);
+                }
+
+                if ((CurrentProjects.Count + 1) > Globals.Max_Projects_Open)
+                    return;
+
                 newP.ProjectClasses = new List<string>();
                 newP.ProjectHeaders = new List<string>();
 
@@ -643,19 +686,20 @@ namespace PSL1GHT_IDE
 
         private void loadProjectToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            tabControl1.TabPages.Clear();
-
             OpenFileDialog ofd = new OpenFileDialog();
 
             ofd.Filter = "PSL1DE Project Files (*.psxml)|*.psxml|All Files (*.*)|*.*";
             
             if (ofd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
-                if (CurrentProjects.Count > 0)
+                if ((CurrentProjects.Count + 1) > Globals.Max_Projects_Open)
                 {
-                    GetCurrentProject(sender as Control).SaveAll();
-                    CurrentProjects.Clear();
+                    CurrentProjects[CurrentProjects.Count - 1].Close();
+                    CurrentProjects.RemoveAt(CurrentProjects.Count - 1);
                 }
+
+                if ((CurrentProjects.Count + 1) > Globals.Max_Projects_Open)
+                    return;
 
                 Project loadP = Project.LoadProject(ofd.FileName);
                 if (loadP != null)
@@ -845,6 +889,18 @@ namespace PSL1GHT_IDE
 
         #region Project Main Form Events
 
+        private void ProjectMain_Closing(object sender, FormClosingEventArgs e)
+        {
+            foreach (Project p in CurrentProjects)
+            {
+                if (!p.Close())
+                {
+                    e.Cancel = true;
+                    return;
+                }
+            }
+        }
+
         private void ProjectMain_Load(object sender, EventArgs e)
         {
             if (Globals.Properties == null)
@@ -947,6 +1003,7 @@ namespace PSL1GHT_IDE
 
             if (e.Button == System.Windows.Forms.MouseButtons.Right)
             {
+                closeToolStripMenuItem1.Visible = false;
                 openToolStripMenuItem1.Visible = false;
                 renameToolStripMenuItem1.Visible = false;
                 deleteToolStripMenuItem1.Visible = false;
@@ -974,6 +1031,7 @@ namespace PSL1GHT_IDE
                         deleteToolStripMenuItem1.Visible = true;
                         break;
                     case "ROOT":
+                        closeToolStripMenuItem1.Visible = true;
                         addClassToolStripMenuItem1.Visible = true;
                         addHeaderToolStripMenuItem1.Visible = true;
                         editPropertiesToolStripMenuItem1.Visible = true;

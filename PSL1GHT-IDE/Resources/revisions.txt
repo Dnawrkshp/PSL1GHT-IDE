@@ -9,6 +9,13 @@
 ###
 3 ::
 - New Project will auto save once created
-- Added support for standard C headers (stdio, string, math, ect)
+- Added support for standard C headers (stdio, string, math, ect) in Autocomplete box
+
+###
+4 ::
+- Updated About menu
+- Added File->Exit (exits PSL1DE)
+- Added ability to close Project by right clicking in view
+- Fixed double clicking build "B" output crashing PSL1DE
 
 ###
