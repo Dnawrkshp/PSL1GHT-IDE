@@ -150,6 +150,9 @@ namespace PSL1GHT_IDE
         public static string FindSDKPath()
         {
             ProjectSDKFinder sdkf = new ProjectSDKFinder();
+            sdkf.BackColor = ProgramProperties.Themes[Globals.Properties.ThemeSelectedIndex].BackColor;
+            sdkf.ForeColor = ProgramProperties.Themes[Globals.Properties.ThemeSelectedIndex].ForeColor;
+            ProjectMain.HandlePluginControls(sdkf.Controls);
             sdkf.ShowDialog();
             return sdkf.ret;
         }
@@ -158,6 +161,9 @@ namespace PSL1GHT_IDE
         {
             PropertiesEditDialog p = new PropertiesEditDialog();
             p.ret = this;
+            p.BackColor = Themes[ThemeSelectedIndex].BackColor;
+            p.ForeColor = Themes[ThemeSelectedIndex].ForeColor;
+            ProjectMain.HandlePluginControls(p.Controls);
             p.ShowDialog();
 
             if (p.ret != null)

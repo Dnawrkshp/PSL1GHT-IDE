@@ -25,3 +25,7 @@
 - Added separate thread to parse includes
 
 ###
+6 ::
+- Minute theme updates
+
+###

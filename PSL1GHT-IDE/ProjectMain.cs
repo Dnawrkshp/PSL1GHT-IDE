@@ -534,6 +534,9 @@ namespace PSL1GHT_IDE
 
             ProjectPropertiesDialog pp = new ProjectPropertiesDialog();
             pp.ret = p;
+            ProjectMain.HandlePluginControls(pp.Controls);
+            pp.BackColor = pp.Controls[0].BackColor;
+            pp.ForeColor = pp.Controls[0].ForeColor;
             pp.ShowDialog();
 
             if (pp.ret != null)
@@ -562,7 +565,11 @@ namespace PSL1GHT_IDE
 
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            new ProjectAboutMenu().Show();
+            ProjectAboutMenu p = new ProjectAboutMenu() { 
+                BackColor = ProgramProperties.Themes[Globals.Properties.ThemeSelectedIndex].BackColor,
+                ForeColor = ProgramProperties.Themes[Globals.Properties.ThemeSelectedIndex].ForeColor };
+            ProjectMain.HandlePluginControls(p.Controls);
+            p.Show();
         }
 
         private void revisionsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -592,7 +599,13 @@ namespace PSL1GHT_IDE
                     revisions.Add(re);
             }
 
-            new ProgramRevisions(revisions).Show();
+            ProgramRevisions p = new ProgramRevisions(revisions)
+            {
+                BackColor = ProgramProperties.Themes[Globals.Properties.ThemeSelectedIndex].BackColor,
+                ForeColor = ProgramProperties.Themes[Globals.Properties.ThemeSelectedIndex].ForeColor
+            };
+            ProjectMain.HandlePluginControls(p.Controls);
+            p.Show();
         }
 
         private void undoToolStripMenuItem_Click(object sender, EventArgs e)
@@ -773,7 +786,9 @@ namespace PSL1GHT_IDE
             int cIndex = 0;
             AddNewDialog and = new AddNewDialog();
 
-
+            and.BackColor = ProgramProperties.Themes[Globals.Properties.ThemeSelectedIndex].BackColor;
+            and.ForeColor = ProgramProperties.Themes[Globals.Properties.ThemeSelectedIndex].ForeColor;
+            ProjectMain.HandlePluginControls(and.Controls);
 
             and.thisDefault = "class";
             while (p.ProjectClasses.Contains("src/" + and.thisDefault + cIndex.ToString() + ".c"))
@@ -827,7 +842,9 @@ namespace PSL1GHT_IDE
             int cIndex = 0;
             AddNewDialog and = new AddNewDialog();
 
-
+            and.BackColor = ProgramProperties.Themes[Globals.Properties.ThemeSelectedIndex].BackColor;
+            and.ForeColor = ProgramProperties.Themes[Globals.Properties.ThemeSelectedIndex].ForeColor;
+            ProjectMain.HandlePluginControls(and.Controls);
 
             and.thisDefault = "header";
             while (p.ProjectClasses.Contains("include/" + and.thisDefault + cIndex.ToString() + ".c"))
@@ -878,6 +895,9 @@ namespace PSL1GHT_IDE
 
             ProjectPropertiesDialog pp = new ProjectPropertiesDialog();
             pp.ret = p;
+            pp.BackColor = ProgramProperties.Themes[Globals.Properties.ThemeSelectedIndex].BackColor;
+            pp.ForeColor = ProgramProperties.Themes[Globals.Properties.ThemeSelectedIndex].ForeColor;
+            ProjectMain.HandlePluginControls(pp.Controls);
             pp.ShowDialog();
 
             if (pp.ret != null)

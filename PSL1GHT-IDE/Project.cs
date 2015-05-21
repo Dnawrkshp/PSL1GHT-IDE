@@ -342,6 +342,9 @@ namespace PSL1GHT_IDE
         public static Project CreateProjectDialog()
         {
             ProjectDialog pd = new ProjectDialog();
+            pd.BackColor = ProgramProperties.Themes[Globals.Properties.ThemeSelectedIndex].BackColor;
+            pd.ForeColor = ProgramProperties.Themes[Globals.Properties.ThemeSelectedIndex].ForeColor;
+            ProjectMain.HandlePluginControls(pd.Controls);
             pd.ShowDialog();
 
             return pd.ret;
