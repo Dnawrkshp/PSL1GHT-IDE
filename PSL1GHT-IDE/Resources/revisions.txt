@@ -7,3 +7,8 @@
 - Added syntax checking to *'d Project Properties
 
 ###
+3 ::
+- New Project will auto save once created
+- Added support for standard C headers (stdio, string, math, ect)
+
+###

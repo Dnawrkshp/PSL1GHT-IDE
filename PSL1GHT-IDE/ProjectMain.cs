@@ -634,6 +634,8 @@ namespace PSL1GHT_IDE
 
                 File.WriteAllText(Path.Combine(newP.ProjectPath, "src/main.c"), PSL1GHT_IDE.Properties.Resources.main);
 
+                newP.SaveAll();
+
                 CurrentProjects.Add(newP);
                 UpdateProjectTreeView();
             }

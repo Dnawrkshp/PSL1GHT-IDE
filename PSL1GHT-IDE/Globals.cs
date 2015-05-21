@@ -10,7 +10,7 @@ namespace PSL1GHT_IDE
 {
     public static class Globals
     {
-        public const int REVISION = 2;
+        public const int REVISION = 3;
         public static string ABOUT_STRING =  "-----  PSL1DE REVISION " + REVISION.ToString() + " -----\n" +
                                             "---- Built " + new FileInfo(System.Reflection.Assembly.GetExecutingAssembly().Location).LastWriteTime.ToShortDateString() + " at " + new FileInfo(System.Reflection.Assembly.GetExecutingAssembly().Location).LastWriteTime.ToShortTimeString() + " ----\n" +
                                             "\n--- Authors ---\n" + 

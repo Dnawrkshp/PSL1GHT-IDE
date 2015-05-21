@@ -221,6 +221,8 @@ namespace PSL1GHT_IDE
                         {
                             filep = filep.Replace("<", "").Replace(">", "");
                             string inc = System.IO.Path.Combine(Globals.Properties.SDKPath, @"psl1ght\ppu\include", filep);
+                            if (!System.IO.File.Exists(inc))
+                                inc = System.IO.Path.Combine(Globals.Properties.SDKPath, @"MinGW\include", filep);
                             if (System.IO.File.Exists(inc))
                             {
                                 string[] lines = System.IO.File.ReadAllLines(inc);
@@ -388,7 +390,7 @@ namespace PSL1GHT_IDE
                 startInd = lines[startLine].Length - 1;
             }
 
-            if (startInd >= lines[startLine].Length)
+            if (startInd >= lines[startLine].Length || startInd < 0)
                 startInd = lines[startLine].Length - 1;
 
             int i = lines[startLine].LastIndexOf(find, startInd);
@@ -414,12 +416,12 @@ namespace PSL1GHT_IDE
             Regex trimmer = new Regex(@"\s\s+");
             line = trimmer.Replace(line, " ");
             string firstWord = line.Split(' ')[0].ToLower();
-            
+
             //Check if it is within a multiline comment
             if (lines != null && ind >= 0)
             {
-                Place multiOpen = isLineDeclaration_FindReverseString(lines, ind, 0, "/*");
-                Place multiClose = isLineDeclaration_FindReverseString(lines, ind, 0, "*/");
+                Place multiOpen = isLineDeclaration_FindReverseString(lines, ind, -1, "/*");
+                Place multiClose = isLineDeclaration_FindReverseString(lines, ind, -1, "*/");
 
                 if (multiOpen.iLine >= 0 && multiClose.iLine < multiOpen.iLine)
                     return false;
