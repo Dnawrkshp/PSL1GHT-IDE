@@ -2,3 +2,8 @@
 - Initial Commit
 
 ###
+2 ::
+- Added Autocomplete box
+- Added syntax checking to *'d Project Properties
+
+###

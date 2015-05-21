@@ -40,6 +40,8 @@ namespace PSL1GHT_IDE
             return null;
         }
 
+        public static ProjectMain Instance = null;
+
         public ProjectMain()
         {
             InitializeComponent();
@@ -64,6 +66,8 @@ namespace PSL1GHT_IDE
             WindowState = FormWindowState.Maximized;
 
             this.Text = "PSL1DE r" + Globals.REVISION.ToString() + " by Dnawrkshp";
+
+            Instance = this;
         }
 
         #region Project Main TreeView CMenu Strip Events
@@ -133,7 +137,7 @@ namespace PSL1GHT_IDE
             if (ofd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 FileInfo orig = new FileInfo(ofd.FileName);
-                string copyto = Path.Combine(p.ProjectPath, "/include/", orig.Name);
+                string copyto = Path.Combine(p.ProjectPath, "include", orig.Name);
 
                 //Don't want to copy a file to the same location..
                 if (new FileInfo(copyto).FullName != orig.FullName)
@@ -1051,10 +1055,10 @@ namespace PSL1GHT_IDE
                     tabControl1.TabPages[tabControl1.TabPages.Count - 1].Name = path;
 
                     newFH.tb = new CSyntaxHighlighter();
+                    newFH.tb.Name = newFH.name;
                     newFH.tb.CurrentTheme = CSyntaxHighlighter.HighlightTheme.Dark;
                     newFH.tb.Tag = "CEDITOR";
                     newFH.tb.Text = File.ReadAllText(path);
-                    newFH.tb.Name = newFH.name;
                     newFH.tb.Location = new Point(0, 0);
                     newFH.tb.Size = tabControl1.TabPages[tabControl1.TabPages.Count - 1].Size;
                     //Get rid of changed line when setting text

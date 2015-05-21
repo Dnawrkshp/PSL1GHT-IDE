@@ -29,6 +29,54 @@ namespace PSL1GHT_IDE
 
         private void button2_Click(object sender, EventArgs e)
         {
+            bool isValid = true;
+            char c;
+
+            //Check App ID
+            if (appid_tb.Text.Length != 9)
+                isValid &= false;
+
+            for (int x = 0; x < ((appid_tb.Text.Length < 9) ? appid_tb.Text.Length : 9); x++)
+            {
+                c = appid_tb.Text[x].ToString().ToLower()[0];
+                if (!(c <= 'z' && c >= 'a') && !(c >= '0' && c <= '9'))
+                    isValid &= false;
+            }
+
+            if (!isValid)
+            {
+                MessageBox.Show(Globals.ERROR_PROJECT_PROPERTY_APPID_INVALID, "Error");
+                return;
+            }
+
+
+            //Check version
+            isValid = true;
+
+            if (ver_tb.Text.Length != 5)
+                isValid &= false;
+
+            for (int x = 0; x < ((ver_tb.Text.Length < 5) ? ver_tb.Text.Length : 5); x++)
+            {
+                c = ver_tb.Text[x].ToString().ToLower()[0];
+                if (c == '.' && x == 2)
+                { }
+                else if (!(c >= '0' && c <= '9'))
+                    isValid &= false;
+            }
+
+            if (!isValid)
+            {
+                MessageBox.Show(Globals.ERROR_PROJECT_PROPERTY_VERSION_INVALID, "Error");
+                return;
+            }
+
+            if (!isValid)
+            {
+                MessageBox.Show(Globals.ERROR_PROJECT_PROPERTY_VERSION_INVALID, "Error");
+                return;
+            }
+
             Close();
         }
 
